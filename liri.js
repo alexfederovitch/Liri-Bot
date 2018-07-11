@@ -3,9 +3,7 @@ const keys = require('./keys.js');
 const Twitter = require('twitter');
 const Spotify = require('node-spotify-api');
 const request = require('request');
-const omdb = require('omdb');
 const fs = require('fs');
-const durableJsonLint = require('durable-json-lint');
 
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
@@ -13,7 +11,7 @@ var client = new Twitter(keys.twitter);
 let input = process.argv[2];
 let selection = process.argv[3];
 
-let queryUrl = "http://www.omdbapi.com/?t=" + selection + "&tomatoes=true&y=&plot=short&apikey=trilogy"
+
 
 let params = {
     screen_name: 'AFederovitch',
@@ -23,19 +21,22 @@ let params = {
 switch (input) {
     case `my-tweets`:
     myTweets();
+    break;
 }
 switch (input) {
     case `spotify-this-song`:
     music();
+    break;
 }
 switch (input) {
     case `movie-this`:
     movieSearch();
-
+    break;
 }
 switch (input) {
     case `do-what-it-says`:
     doWhatItSays();
+    break;
 }
 
 function myTweets () {
@@ -70,11 +71,22 @@ function music() {
 };
 
 function movieSearch() {
+    if (!selection) {
+        selection = "Mr. Nobody."
+        console.log("If you havne't watched 'Mr. Nobody', then you should.  It's on Netflix!")
+    }
+    let queryUrl = "http://www.omdbapi.com/?t=" + selection + "&tomatoes=true&y=&plot=short&apikey=trilogy";
     request(queryUrl, function(error, response, body) {
-
         if (!error && response.statusCode === 200) {
 
-          console.log("The movie's rating is: " + JSON.parse(body).Year);
+          console.log("The movie's title is: " + JSON.parse(body).Title);
+          console.log(JSON.parse(body).Title + ' came out in ' + JSON.parse(body).Year);
+          console.log('The IMDB rating for ' + JSON.parse(body).Title + ' is ' + JSON.parse(body).imdbRating);
+          console.log('The Rotten Tomatoes rating for ' + JSON.parse(body).Title + ' is ' + JSON.parse(body).Ratings[1].Value);
+          console.log(JSON.parse(body).Title + ' was made in ' + JSON.parse(body).Country);
+          console.log(JSON.parse(body).Language + ' is spoken in ' + JSON.parse(body).Title);
+          console.log('The plot is ' + JSON.parse(body).Plot);
+          console.log('The principal actors in ' + JSON.parse(body).Title + ' are: ' + JSON.parse(body).Actors + '.');
         } 
 
     });
@@ -86,7 +98,7 @@ function doWhatItSays() {
         if (error) {
             console.log(error);
         } else {
-            
+
         }
     });
 }
