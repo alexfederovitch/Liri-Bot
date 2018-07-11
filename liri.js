@@ -43,9 +43,15 @@ function myTweets () {
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
         if (!error) {
             console.log('MY MOST RECENT TWEETS: ')
+            let a = '';
           for (let i = 0; i < tweets.length; i++) {
-              console.log(tweets[i].text);
+              a += `${tweets[i].text}\n`;
           } 
+            console.log(a);
+            fs.appendFile('log.txt', `My most recent Tweets:\n ${a} \n`, function (err) {
+                if (err) throw err;
+                console.log("log.txt saved");
+            });
         } else {
             console.log('There was an error!');
         }
@@ -61,10 +67,15 @@ function music() {
                 return console.log('Error occurred: ' + err)
             } else {
                 let song = data.tracks;
-                console.log('Artist: ' + song.items[0].artists[0].name);
-                console.log('Song name: ' + song.items[0].name);
-                console.log('Preview the song: ' + song.items[0].preview_url);
-                console.log('Album: ' + song.items[0].album.name);
+                let a = `Artist:  ${song.items[0].artists[0].name} \n`
+                a += `Song name:  ${song.items[0].name} \n`
+                a += `Preview the song:  ${song.items[0].preview_url} \n`
+                a += `Album:  ${song.items[0].album.name}\n`
+                console.log(a);
+                fs.appendFile('log.txt',`I Spotified this song:\n ${a}\n`, function (err) {
+                    if (err) throw err;
+                    console.log("log.txt saved");
+                });
             }
         })
     }
@@ -79,26 +90,32 @@ function movieSearch() {
     request(queryUrl, function(error, response, body) {
         if (!error && response.statusCode === 200) {
 
-          console.log("The movie's title is: " + JSON.parse(body).Title);
-          console.log(JSON.parse(body).Title + ' came out in ' + JSON.parse(body).Year);
-          console.log('The IMDB rating for ' + JSON.parse(body).Title + ' is ' + JSON.parse(body).imdbRating);
-          console.log('The Rotten Tomatoes rating for ' + JSON.parse(body).Title + ' is ' + JSON.parse(body).Ratings[1].Value);
-          console.log(JSON.parse(body).Title + ' was made in ' + JSON.parse(body).Country);
-          console.log(JSON.parse(body).Language + ' is spoken in ' + JSON.parse(body).Title);
-          console.log('The plot is ' + JSON.parse(body).Plot);
-          console.log('The principal actors in ' + JSON.parse(body).Title + ' are: ' + JSON.parse(body).Actors + '.');
+            let a = `The movie's title is: ${JSON.parse(body).Title} \n`
+            a += `${JSON.parse(body).Title} came out in ${JSON.parse(body).Year}\n`
+            a += `The IMDB rating for ${JSON.parse(body).Title} is ${JSON.parse(body).imdbRating}\n`
+            a += `The Rotten Tomatoes rating for ${JSON.parse(body).Title} is ${JSON.parse(body).Ratings[1].Value}\n`
+            a += `${JSON.parse(body).Title} was made in ${JSON.parse(body).Country}\n`
+            a += `${JSON.parse(body).Language} is spoken in ${JSON.parse(body).Title}\n`
+            a += `The plot is ${JSON.parse(body).Plot}\n`
+            a += `The principal actors in ${JSON.parse(body).Title} are: ${JSON.parse(body).Actors}.\n`
+            console.log(a);
+            fs.appendFile('log.txt',`I looked up this movie:\n ${a}\n`, function (err) {
+                if (err) throw err;
+                console.log("log.txt saved");
+            });
         } 
 
     });
 }
 
 function doWhatItSays() {
-    console.log('hello');
     fs.readFile('random.txt', 'utf8', function(error, data) {
         if (error) {
             console.log(error);
         } else {
-
+            let txt = data.split(',');
+            selection = txt[1];
+            music(selection);
         }
     });
 }
